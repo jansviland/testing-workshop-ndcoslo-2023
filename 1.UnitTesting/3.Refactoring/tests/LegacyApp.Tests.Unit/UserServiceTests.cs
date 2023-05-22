@@ -98,6 +98,15 @@ public class UserServiceTests
         // year is 2000
         clock.Now.Returns(new DateTime(2000, 1, 1));
 
+        var clientResponse = new Client
+        {
+            Id = 123,
+            Name = "Test",
+            ClientStatus = ClientStatus.Gold
+        };
+
+        clientRepository.GetById(Arg.Any<int>()).Returns(clientResponse);
+
         // credit limit is 499
         userCreditService.GetCreditLimit(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(499);
 
@@ -108,9 +117,45 @@ public class UserServiceTests
             "Jan",
             "Banan",
             "mail@mail.com",
-            new DateTime(1999, 1, 1), 4);
+            new DateTime(1970, 1, 1), 4);
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void AddUser_ShouldCreateUser_WhenUserDetailsAreValid()
+    {
+        // Arrange
+        var clientRepository = Substitute.For<IClientRepository>();
+        var userCreditService = Substitute.For<IUserCreditService>();
+        var clock = Substitute.For<IClock>();
+
+        // year is 2000
+        clock.Now.Returns(new DateTime(1970, 1, 1));
+
+        var clientResponse = new Client
+        {
+            Id = 123,
+            Name = "VeryImportantClient", // skip credit check
+            ClientStatus = ClientStatus.Gold
+        };
+
+        clientRepository.GetById(Arg.Any<int>()).Returns(clientResponse);
+
+        // credit limit is 501
+        // userCreditService.GetCreditLimit(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(501);
+
+        var sut = new UserService(clientRepository, userCreditService, clock);
+
+        // Act
+        var result = sut.AddUser(
+            "Jan",
+            "Banan",
+            "mail@mail.com",
+            new DateTime(2000, 1, 1), 4);
+
+        // Assert
+        Assert.True(result);
     }
 }

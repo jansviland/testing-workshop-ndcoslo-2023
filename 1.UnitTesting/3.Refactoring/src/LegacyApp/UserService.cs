@@ -42,7 +42,8 @@ namespace LegacyApp
             }
 
             var now = _clock.Now;
-            int age = now.Year - dateOfBirth.Year;
+            // int age = now.Year - dateOfBirth.Year;
+            int age = dateOfBirth.Year - now.Year;
             if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
 
             if (age < 21)

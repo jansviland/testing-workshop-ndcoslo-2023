@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Xunit;
 
 namespace AwesomeCalculator.Tests.Unit;
@@ -21,6 +21,7 @@ public class CalculatorTests
 
     [Theory]
     [InlineData(5, 5, 0)]
+    [InlineData(10, 5, 5)]
     public void Test_Subtract(int first, int second, int expected)
     {
         // Arrange

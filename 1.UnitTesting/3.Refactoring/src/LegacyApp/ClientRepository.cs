@@ -33,11 +33,11 @@ namespace LegacyApp
                 while (reader.Read())
                 {
                     client = new Client
-                                      {
-                                          Id = int.Parse(reader["ClientId"].ToString() ?? string.Empty),
-                                          Name = reader["Name"].ToString(),
-                                          ClientStatus = (ClientStatus)int.Parse(reader["ClientStatusId"].ToString()!)
-                                      };
+                    {
+                        Id = int.Parse(reader["ClientId"].ToString() ?? string.Empty),
+                        Name = reader["Name"].ToString(),
+                        ClientStatus = (ClientStatus)int.Parse(reader["ClientStatusId"].ToString()!)
+                    };
                 }
             }
 

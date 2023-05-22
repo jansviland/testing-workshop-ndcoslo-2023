@@ -71,6 +71,7 @@ public class UserServiceTests
         var userCreditService = Substitute.For<IUserCreditService>();
         var clock = Substitute.For<IClock>();
 
+        // year is 2000
         clock.Now.Returns(new DateTime(2000, 1, 1));
 
         var sut = new UserService(clientRepository, userCreditService, clock);
@@ -81,6 +82,33 @@ public class UserServiceTests
             "Banan",
             "mail@mail.com",
             new DateTime(year, 1, 1), 4);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void AddUser_ShouldNotCreateUser_WhenUserHasCreditLimitAndLimitIsLessThan500()
+    {
+        // Arrange
+        var clientRepository = Substitute.For<IClientRepository>();
+        var userCreditService = Substitute.For<IUserCreditService>();
+        var clock = Substitute.For<IClock>();
+
+        // year is 2000
+        clock.Now.Returns(new DateTime(2000, 1, 1));
+
+        // credit limit is 499
+        userCreditService.GetCreditLimit(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(499);
+
+        var sut = new UserService(clientRepository, userCreditService, clock);
+
+        // Act
+        var result = sut.AddUser(
+            "Jan",
+            "Banan",
+            "mail@mail.com",
+            new DateTime(1999, 1, 1), 4);
 
         // Assert
         Assert.False(result);

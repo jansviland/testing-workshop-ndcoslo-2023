@@ -36,6 +36,7 @@ public class CalculatorTests
 
     [Theory]
     [InlineData(1, 1, 1)]
+    [InlineData(2, 5, 10)]
     public void Test_Multiply(int first, int second, int expected)
     {
         // Arrange
@@ -50,6 +51,7 @@ public class CalculatorTests
 
     [Theory]
     [InlineData(1, 1, 1, 0)]
+    [InlineData(6, 3, 2, 0)]
     public void Test_Divide(int first, int second, int expected, int remainder)
     {
         // Arrange

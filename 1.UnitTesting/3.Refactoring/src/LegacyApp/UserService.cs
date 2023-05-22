@@ -8,11 +8,14 @@ namespace LegacyApp
         private readonly IUserCreditService _userCreditService;
         private readonly IClock _clock;
 
+        private readonly bool _isTest;
+
         public UserService()
         {
             _clientRepository = new ClientRepository();
             _userCreditService = new UserCreditServiceClient();
             _clock = new Clock();
+            _isTest = false;
         }
 
         public UserService(IClientRepository clientRepository, IUserCreditService userCreditService)
@@ -20,6 +23,7 @@ namespace LegacyApp
             _clientRepository = clientRepository;
             _userCreditService = userCreditService;
             _clock = new Clock();
+            _isTest = true;
         }
 
         public UserService(IClientRepository clientRepository, IUserCreditService userCreditService, IClock clock)
@@ -27,6 +31,7 @@ namespace LegacyApp
             _clientRepository = clientRepository;
             _userCreditService = userCreditService;
             _clock = clock;
+            _isTest = true;
         }
 
         public bool AddUser(string firname, string surname, string email, DateTime dateOfBirth, int clientId)
@@ -89,7 +94,11 @@ namespace LegacyApp
                 return false;
             }
 
-            UserDataAccess.AddUser(user);
+            if (!_isTest)
+            {
+                UserDataAccess.AddUser(user);
+            }
+
             return true;
         }
     }

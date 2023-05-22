@@ -21,7 +21,7 @@ public class UserServiceTests
         // Assert
         Assert.False(result);
     }
-    
+
     [Fact]
     public void AddUser_ShouldNotCreateUser_WhenLastNameIsEmpty()
     {
@@ -37,8 +37,8 @@ public class UserServiceTests
         // Assert
         Assert.False(result);
     }
-    
-    
+
+
     [Theory]
     [InlineData("mail")]
     [InlineData("mail@mail")]
@@ -54,6 +54,33 @@ public class UserServiceTests
 
         // Act
         var result = sut.AddUser("Jan", "Banan", mail, new DateTime(1993, 1, 1), 4);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Theory]
+    [InlineData(2020)] // user is 20
+    [InlineData(2019)] // user is 19
+    [InlineData(2001)] // user is 1
+    [InlineData(2000)] // user is 0
+    public void AddUser_ShouldNotCreateUser_WhenUserIsUnder21(int year)
+    {
+        // Arrange
+        var clientRepository = Substitute.For<IClientRepository>();
+        var userCreditService = Substitute.For<IUserCreditService>();
+        var clock = Substitute.For<IClock>();
+
+        clock.Now.Returns(new DateTime(2000, 1, 1));
+
+        var sut = new UserService(clientRepository, userCreditService, clock);
+
+        // Act
+        var result = sut.AddUser(
+            "Jan",
+            "Banan",
+            "mail@mail.com",
+            new DateTime(year, 1, 1), 4);
 
         // Assert
         Assert.False(result);

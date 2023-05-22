@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace LegacyApp
 {
@@ -7,17 +6,27 @@ namespace LegacyApp
     {
         private readonly IClientRepository _clientRepository;
         private readonly IUserCreditService _userCreditService;
+        private readonly IClock _clock;
 
         public UserService()
         {
             _clientRepository = new ClientRepository();
             _userCreditService = new UserCreditServiceClient();
+            _clock = new Clock();
         }
 
         public UserService(IClientRepository clientRepository, IUserCreditService userCreditService)
         {
             _clientRepository = clientRepository;
             _userCreditService = userCreditService;
+            _clock = new Clock();
+        }
+
+        public UserService(IClientRepository clientRepository, IUserCreditService userCreditService, IClock clock)
+        {
+            _clientRepository = clientRepository;
+            _userCreditService = userCreditService;
+            _clock = clock;
         }
 
         public bool AddUser(string firname, string surname, string email, DateTime dateOfBirth, int clientId)
@@ -32,7 +41,7 @@ namespace LegacyApp
                 return false;
             }
 
-            var now = DateTime.Now;
+            var now = _clock.Now;
             int age = now.Year - dateOfBirth.Year;
             if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
 

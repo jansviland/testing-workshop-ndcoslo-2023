@@ -4,8 +4,6 @@ using ForeignExchange.Api.Models;
 using ForeignExchange.Api.Repositories;
 using ForeignExchange.Api.Services;
 using ForeignExchange.Api.Validation;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
@@ -57,7 +55,7 @@ public class QuoteServiceTests
     }
 
     [Fact]
-    public async Task GetQuoteAsync_ShouldThrowNegativeAmountException_WhenAmountIsNegative()
+    public async Task GetQuoteAsync_ShouldThrowSameCurrencyException_WhenAmountIsNegative()
     {
         // Arrange
         var fromCurrency = "USD";
@@ -72,7 +70,24 @@ public class QuoteServiceTests
             .ThrowAsync<SameCurrencyException>()
             .WithMessage($"You cannot convert currency {fromCurrency} to itself");
     }
-    
+
+    [Fact]
+    public async Task GetQuoteAsync_ShouldThrowNegativeAmountException_WhenAmountIsNegative()
+    {
+        // Arrange
+        var fromCurrency = "USD";
+        var toCurrency = "GBP";
+        var amount = 0;
+
+        // Act
+        var action = () => _sut.GetQuoteAsync(fromCurrency, toCurrency, amount);
+
+        // Assert
+        await action.Should()
+            .ThrowAsync<NegativeAmountException>()
+            .WithMessage("You can only convert a positive amount of money");
+    }
+
     [Fact]
     public async Task GetQuoteAsync_ShouldLogMessage_WhenQuoteIsCalculated()
     {

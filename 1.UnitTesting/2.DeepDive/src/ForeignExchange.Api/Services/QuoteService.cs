@@ -26,12 +26,12 @@ public class QuoteService : IQuoteService
             {
                 throw new NegativeAmountException();
             }
-            
+
             if (fromCurrency == toCurrency)
             {
                 throw new SameCurrencyException(fromCurrency);
             }
-        
+
             var rate = await _ratesRepository.GetRateAsync(fromCurrency, toCurrency);
 
             if (rate is null)
@@ -40,7 +40,7 @@ public class QuoteService : IQuoteService
             }
 
             var quoteAmount = rate.Rate * amount;
-        
+
             return new ConversionQuote
             {
                 BaseCurrency = fromCurrency,

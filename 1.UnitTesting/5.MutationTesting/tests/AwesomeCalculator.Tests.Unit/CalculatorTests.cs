@@ -25,7 +25,7 @@ public class CalculatorTests
     {
         // Arrange
         var sut = new Calculator();
-        
+
         // Act
         var result = sut.Subtract(first, second);
 
@@ -35,11 +35,15 @@ public class CalculatorTests
 
     [Theory]
     [InlineData(1, 1, 1)]
+    [InlineData(5, 2, 10)]
+    [InlineData(3, 2, 6)]
+    [InlineData(3, 3, 9)]
+    [InlineData(4, 3, 12)]
     public void Test_Multiply(int first, int second, int expected)
     {
         // Arrange
         var sut = new Calculator();
-        
+
         // Act
         var result = sut.Multiply(first, second);
 
@@ -49,17 +53,39 @@ public class CalculatorTests
 
     [Theory]
     [InlineData(1, 1, 1, 0)]
+    [InlineData(10, 2, 5, 0)]
     public void Test_Divide(int first, int second, int expected, int remainder)
     {
         // Arrange
         var sut = new Calculator();
-        
+
         // Act
         var result = sut.Divide(first, second);
 
         // Assert
         result.Result.Should().Be(expected);
         result.Remainder.Should().Be(remainder);
+    }
+
+
+    [Fact]
+    public void Test_Divide_By_Zero()
+    {
+        // Arrange
+        var sut = new Calculator();
+
+        // Act
+        // var result = sut.Divide(12, 0);
+
+        // Assert
+        var exception = Assert.Throws<DivideByZeroException>(() => sut.Divide(12, 0));
+
+        exception.Should().NotBeNull();
+
+        Assert.Equal(nameof(DivideByZeroException), exception.GetType().Name);
+
+        // result.Result.Should().Be(expected);
+        // result.Remainder.Should().Be(remainder);
     }
 
     [Fact]
@@ -70,7 +96,7 @@ public class CalculatorTests
 
         // Act
         var result = () => sut.Divide(1, 0);
-        
+
         // Assert
         result.Should().Throw<DivideByZeroException>();
     }

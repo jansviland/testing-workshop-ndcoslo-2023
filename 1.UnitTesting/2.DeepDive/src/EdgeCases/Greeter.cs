@@ -1,4 +1,4 @@
-﻿namespace EdgeCases;
+namespace EdgeCases;
 
 public interface IClock
 {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace LegacyApp
 {
@@ -55,6 +55,8 @@ namespace LegacyApp
             {
                 return false;
             }
+            
+            var client = _clientRepository.GetById(clientId);
 
             // var clientRepository = new ClientRepository();
             var client = _clientRepository.GetById(clientId);

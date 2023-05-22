@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NSubstitute" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="$(AssemblyName).Tests.Unit"/>
+        <InternalsVisibleTo Include="$(AssemblyName).Tests.Integration"/>
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+    </ItemGroup>
 </Project>

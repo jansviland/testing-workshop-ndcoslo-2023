@@ -1,4 +1,6 @@
-﻿namespace AwesomeCalculator;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace AwesomeCalculator;
 
 public class Calculator
 {
@@ -11,7 +13,7 @@ public class Calculator
     {
         return first - second;
     }
-
+    
     public int Multiply(int first, int second)
     {
         return first * second;

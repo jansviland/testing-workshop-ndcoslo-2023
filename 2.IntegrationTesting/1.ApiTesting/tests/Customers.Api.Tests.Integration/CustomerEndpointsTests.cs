@@ -124,6 +124,51 @@ public class CustomerEndpointsTests : IAsyncLifetime
         response.Errors.Should().ContainKey(nameof(CustomerRequest.Email));
     }
 
+    [Fact]
+    public async Task GetAll_ShouldReturnAllCustomers_WhenCustomersExist()
+    {
+        // Arrange
+
+        // add a couple of customers
+        var customerRequest1 = new CustomerRequest()
+        {
+            GitHubUsername = "johnsmith",
+            FullName = "John Smith",
+            Email = "mail@mail.com",
+            DateOfBirth = new DateTime(1990, 1, 1)
+        };
+
+        var customerRequest2 = new CustomerRequest()
+        {
+            GitHubUsername = "jan",
+            FullName = "Jan Banan",
+            Email = "jan@banan.com",
+            DateOfBirth = new DateTime(1990, 1, 1)
+        };
+
+        var customerCreateResponse1 = await _client.PostAsJsonAsync("/customers", customerRequest1);
+        var customerCreateResponse2 = _client.PostAsJsonAsync("/customers", customerRequest2);
+
+        var customerResponse1 = await customerCreateResponse1.Content.ReadFromJsonAsync<CustomerResponse>();
+        var customerResponse2 = await customerCreateResponse2.Result.Content.ReadFromJsonAsync<CustomerResponse>();
+
+        _customerIds.Add(customerResponse1!.Id);
+        _customerIds.Add(customerResponse2!.Id);
+
+        // Act
+        var createdCustomerResponse = await _client.GetAsync("/customers");
+        var response = await createdCustomerResponse.Content.ReadFromJsonAsync<GetAllCustomersResponse>();
+
+        // Assert
+        response.Should().NotBeNull();
+
+        Assert.NotNull(response);
+        Assert.NotNull(response.Customers);
+        Assert.NotEmpty(response.Customers);
+        Assert.True(response.Customers.ToList().Count > 1);
+        Assert.Contains(response.Customers.ToList(), x => x.Id == customerResponse1.Id);
+    }
+
     public async Task DisposeAsync()
     {
         // Remove all customers

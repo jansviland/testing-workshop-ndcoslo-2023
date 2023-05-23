@@ -55,7 +55,7 @@ public class CustomerEndpointsTests : IAsyncLifetime
         customerResponse.Should().BeEquivalentTo(expectedResponse, opt => opt.Excluding(x => x.Id));
         customerResponse.Id.Should().NotBeEmpty();
     }
-    
+
     [Fact]
     public async Task Get_ShouldReturnCustomer_WhenCustomerExists()
     {
@@ -93,14 +93,14 @@ public class CustomerEndpointsTests : IAsyncLifetime
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         problemDetails!.Errors["Email"].Should().Equal($"{request.Email} is not a valid email address");
     }
-    
+
     [Fact]
     public async Task GetAll_ShouldReturnAllCustomers_WhenCustomersExist()
     {
         // Arrange
         var request = _customerGenerator.Generate();
         _setupGitHubUser(request.GitHubUsername);
-    
+
         var createCustomerHttpResponse = await _client.PostAsJsonAsync("customers", request);
         var createdCustomer = await createCustomerHttpResponse.Content.ReadFromJsonAsync<CustomerResponse>();
 
@@ -112,7 +112,7 @@ public class CustomerEndpointsTests : IAsyncLifetime
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         customerResponse!.Customers.Should().ContainEquivalentOf(createdCustomer).And.HaveCount(1);
     }
-    
+
     [Fact]
     public async Task Get_ShouldReturnNotFound_WhenCustomerDoesNotExist()
     {
@@ -125,20 +125,20 @@ public class CustomerEndpointsTests : IAsyncLifetime
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
-    
+
     [Fact]
     public async Task Update_ShouldUpdateCustomerDetails_WhenDetailsAreValid()
     {
         // Arrange
         var createRequest = _customerGenerator.Generate();
         _setupGitHubUser(createRequest.GitHubUsername);
-    
+
         var createCustomerHttpResponse = await _client.PostAsJsonAsync("customers", createRequest);
         var createdCustomer = await createCustomerHttpResponse.Content.ReadFromJsonAsync<CustomerResponse>();
 
         var updateRequest = _customerGenerator.Generate();
         _setupGitHubUser(updateRequest.GitHubUsername);
-        
+
         var expectedResponse = new CustomerResponse
         {
             Email = updateRequest.Email,
@@ -151,18 +151,18 @@ public class CustomerEndpointsTests : IAsyncLifetime
         var response = await _client.PutAsJsonAsync($"customers/{createdCustomer.Id}", updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);    
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var customerResponse = await response.Content.ReadFromJsonAsync<CustomerResponse>();
         customerResponse.Should().BeEquivalentTo(expectedResponse, opt => opt.Excluding(x => x.Id));
     }
-    
+
     [Fact]
     public async Task Delete_ShouldDeleteCustomer_WhenCustomerExists()
     {
         // Arrange
         var createRequest = _customerGenerator.Generate();
         _setupGitHubUser(createRequest.GitHubUsername);
-    
+
         var createCustomerHttpResponse = await _client.PostAsJsonAsync("customers", createRequest);
         var createdCustomer = await createCustomerHttpResponse.Content.ReadFromJsonAsync<CustomerResponse>();
 
@@ -172,7 +172,7 @@ public class CustomerEndpointsTests : IAsyncLifetime
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
-    
+
     [Fact]
     public async Task Delete_ShouldReturnNotFound_WhenCustomerDoesNotExist()
     {
@@ -185,7 +185,7 @@ public class CustomerEndpointsTests : IAsyncLifetime
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
-    
+
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task DisposeAsync()

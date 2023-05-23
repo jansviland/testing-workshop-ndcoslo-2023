@@ -169,6 +169,19 @@ public class CustomerEndpointsTests : IAsyncLifetime
         Assert.Contains(response.Customers.ToList(), x => x.Id == customerResponse1.Id);
     }
 
+    [Fact]
+    public async Task Get_ShouldReturnNotFound_WhenCustomerDoesNotExist()
+    {
+        // Arrange
+        var guid = Guid.NewGuid();
+
+        // Act
+        var getCustomerResponse = await _client.GetAsync($"/customers/{guid}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, getCustomerResponse.StatusCode);
+    }
+
     public async Task DisposeAsync()
     {
         // Remove all customers

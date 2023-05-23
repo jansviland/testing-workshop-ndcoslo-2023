@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using Customers.Api.Contracts.Requests;
 using Customers.Api.Contracts.Responses;
 using FluentAssertions;
@@ -180,6 +182,48 @@ public class CustomerEndpointsTests : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, getCustomerResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_ShouldUpdateCustomerDetails_WhenDetailsAreValid()
+    {
+        // Arrange
+        var customerRequest1 = new CustomerRequest()
+        {
+            GitHubUsername = "johnsmith",
+            FullName = "John Smith",
+            Email = "mail@mail.com",
+            DateOfBirth = new DateTime(1990, 1, 1)
+        };
+
+        // TODO: include all values, even if they are not updated
+        var updateCustomerRequest = new UpdateCustomerRequest()
+        {
+            Customer = new CustomerRequest()
+            {
+                Email = "woop@woop.com"
+            }
+        };
+
+        var updateCustomerRequestContent = new StringContent(
+            JsonSerializer.Serialize(updateCustomerRequest),
+            Encoding.UTF8, "application/json");
+
+
+        var customerCreateResponse1 = await _client.PostAsJsonAsync("/customers", customerRequest1);
+        var customerResponse1 = await customerCreateResponse1.Content.ReadFromJsonAsync<CustomerResponse>();
+
+        _customerIds.Add(customerResponse1!.Id);
+
+        // Act
+        var updateCustomerResponse = await _client.PutAsync($"/customers/{customerResponse1.Id}", updateCustomerRequestContent);
+        var response = await updateCustomerResponse.Content.ReadFromJsonAsync<CustomerResponse>();
+
+        // Assert
+        response.Should().NotBeNull();
+
+        Assert.NotNull(response);
+        Assert.Equal(updateCustomerRequest.Customer.Email, response.Email);
     }
 
     public async Task DisposeAsync()

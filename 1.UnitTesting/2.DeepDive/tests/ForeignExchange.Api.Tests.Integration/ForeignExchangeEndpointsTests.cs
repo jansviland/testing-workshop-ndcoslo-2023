@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using Bogus;
+using ForeignExchange.Api.Models;
+using Xunit;
 
 namespace ForeignExchange.Api.Tests.Integration;
 
@@ -18,6 +20,18 @@ public class ForeignExchangeEndpointsTests : IAsyncLifetime
     //         .RuleFor(x => x.GitHubUsername, f => f.Person.UserName.Replace(".", "").Replace("-", "").Replace("_", ""))
     //         .UseSeed(1000);
 
+    private readonly Faker<FxRate> _FxRateGenerator =
+        new Faker<FxRate>()
+            .RuleFor(x => x.FromCurrency, f => f.Finance.Currency().Code)
+            .RuleFor(x => x.ToCurrency, f => f.Finance.Currency().Code)
+            .RuleFor(x => x.Rate, f => f.Random.Decimal(0.1m, 100m))
+            .RuleFor(x => x.TimestampUtc, f => f.Date.Past(1));
+
+
+    // private readonly Faker<string> _currencyGenerator =
+    //     new Faker<string>()
+    //         .RuleFor(x => x., f => f.Finance.Currency().Symbol);
+
     public ForeignExchangeEndpointsTests(ForeignExchangeApiFactory waf)
     {
         _client = waf.Client;
@@ -26,8 +40,15 @@ public class ForeignExchangeEndpointsTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Test()
+    public void GetQuote_ShouldReturnQuote_WhenCurrencyPairIsSupported()
     {
+        // Arrange
+        var randomCurrencies = _FxRateGenerator.Generate();
+        
+        var fromCurrency = randomCurrencies.FromCurrency;
+        var toCurrency = randomCurrencies.ToCurrency;
+        var amount = 100;
+
         Assert.True(false);
     }
 

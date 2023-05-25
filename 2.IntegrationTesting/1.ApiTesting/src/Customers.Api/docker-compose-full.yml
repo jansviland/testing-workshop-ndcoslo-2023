@@ -5,8 +5,8 @@ services:
   api:
     build: .
     ports:
-      - "5001:443"
-      - "5000:80"
+      - "5101:443"
+      - "5100:80"
     environment:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Password=Test1234!
